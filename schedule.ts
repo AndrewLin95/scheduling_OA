@@ -1,4 +1,5 @@
 // START: 12:30 PM 22Jan2023
+//   2:00
 // npx ts-node schedule.ts
 
 import { daysOfMonth, Employee } from "./models";
@@ -32,31 +33,29 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
           // countOfCertified -= 2;
           return buildingsToDo;
         } else {
-          const obj = {
-            index : i,
-          }
-          const builder = {
-            certified: 1,
-          }
-          obj[buildings[i]] = builder
-
-          buildingsToDo.push(obj);
+          buildingsToDo.push(buildings[i]);
         }
       } else {
         countOfCertified ++; 
-        const obj = {
-          index : i,
-        }
-        const builder = {
-          certified: 1,
-        }
-        obj[buildings[i]] = builder
-
-        buildingsToDo.push(obj);
+        buildingsToDo.push(buildings[i]);
       } 
       i++;
     };
-    // [ 'single', 'double', 'commercial', 'single' ]
+    // [
+    //   { index: 0, single: { certified: 1 } },
+    //   { index: 1, double: { certified: 1 } },
+    //   { index: 2, commercial: { certified: 1 } },
+    //   { index: 3, single: { certified: 1 } }
+    // ]
+
+    // const obj = {
+    //   index : i,
+    // }
+    // const builder = {
+    //   certified: 1,
+    // }
+    // obj[buildings[i]] = builder
+
     // check remaining laborers.
     // ideally, assign pendingCerts to commercial, then assign laborers to rest...
     let countOfPendingCert = 0;
