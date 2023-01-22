@@ -16,18 +16,34 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
   //    If the cut off is at commercial, check if a double is after it. Since the number of workers is less, even though commercial is cut off, can may still fulfill the double building.
   // Return an array with indicies correlating to the day of the week [Monday, Tuesday... etc.].
   //    Within the array, return an object with string for building type, and the number / type of employee required for the build.
-  
-  const numberOfBuildingsCheck = (buildings: string[], employees) => {
 
+  const numberOfBuildingsCheck = (buildings: string[], employees: Employee) => {
+    let buildingsToDo: string[] = [];
+
+    let i = 0;
+    let countOfCertified = 0;
+    while (countOfCertified < employees.certified) {
+      if (buildings[i] === commercial){
+        countOfCertified += 2;
+        // if adding this building type exceeds the number of certified workers, do not add and remove the count then iterate.
+        if (countOfCertified > employees.certified) {
+          countOfCertified -= 2;
+        } else {
+          buildingsToDo.push(buildings[i]);
+        }
+      } else {
+        countOfCertified ++;
+        buildingsToDo.push(buildings[i]);
+      }
+      i++;
+    };
+    return buildingsToDo;
   }
 
   const checkBuildings = numberOfBuildingsCheck(buildings, employees.monday);
+  console.log(checkBuildings);
 
-
-
-
-  
-  return null;
+  return checkBuildings;
 }
 
 
@@ -62,3 +78,7 @@ const employees = {
 }
 
 const result = schedule(buildings, employees);
+
+const tempResultOutputSchema = {
+  
+}
