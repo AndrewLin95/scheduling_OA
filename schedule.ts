@@ -41,7 +41,11 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
       } 
       i++;
     };
-    // [
+    return buildingsToDo;
+  }
+
+  const schedule = (buildingsRequired, employees) => {
+        // [
     //   { index: 0, single: { certified: 1 } },
     //   { index: 1, double: { certified: 1 } },
     //   { index: 2, commercial: { certified: 1 } },
@@ -62,20 +66,37 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
     let countOfLaborer = 0;
 
     let j = 0;
-    while (j < buildingsToDo.length) {
-      if (buildingsToDo[j] = double) {
-        
+    while (j < buildingsRequired.length) {
+      // for commercial buildings
+      if (buildingsRequired[j] = commercial) {
+        let obj = {
+          index: j,
+          commercial: {
+            certified: 2,
+            pendingCert: 2,
+            laborer: 0,
+          }
+        };
+      // check pending certs, skip if not enough. TODO: a way to index what was skipped and return to buildings. >insert beginning of array
+      if (countOfPendingCert + 2 > employees.pendingCert){
+        j ++;
+      } else if (countOfLaborer + 1 < employees.laborer) {
+        let remainingWorkers = 0;
+        while (remainingWorkers < 4) {
+          remainingWorkers++;
+          obj.commercial = { certified: 2, pendingCert: 2, laborer: remainingWorkers }
+        }
       }
+      return obj;
+      } 
     }
-
-
-    return buildingsToDo;
   }
 
-  const checkBuildings = numberOfBuildingsCheck(buildings, employees.monday);
-  console.log(checkBuildings);
+  const buildingsRequired = numberOfBuildingsCheck(buildings, employees.monday);
+  const result = schedule(buildingsRequired, employees.monday)
+  console.log(result);
 
-  return checkBuildings;
+  return result;
 }
 
 
