@@ -126,19 +126,25 @@ const schedule = (buildings: string[], employees: any) => {
     return buildingsToDo;
   }
 
-  let schedule = {};
+  let schedule = {
+    monday: [],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: [],
+  };
 
   let i = 0;
   const dayOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
   while (i < 5) {
     const buildingsRequired = numberOfBuildingsCheck(buildings, employees[i][dayOfWeek[i]], dayOfWeek[i]);
-    console.log(buildingsRequired);
+    schedule[dayOfWeek[i]] = buildingsRequired;
     i++;
   }
 
   // const result = schedule(buildingsRequired, employees.monday)
   console.log(schedule);
-
+  
   return schedule;
 }
 
