@@ -8,6 +8,8 @@ const SINGLE = "single";
 const DOUBLE = "double";
 const COMMERICAL = "commercial";
 
+const MONDAY = "monday";
+
 const certified = "certified";
 const pendingCert = "installer pending certification";
 const laborer = "laborer";
@@ -19,7 +21,7 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
   // Return an array with indicies correlating to the day of the week [Monday, Tuesday... etc.].
   //    Within the array, return an object with string for building type, and the number / type of employee required for the build.
 
-  const numberOfBuildingsCheck = (buildings: string[], employees: Employee) => {
+  const numberOfBuildingsCheck = (buildings: string[], employees: Employee, dayOfWeek: string) => {
     let buildingsToDo: any = [];
 
     let i = 0;
@@ -33,6 +35,13 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
 
     while (countOfCertified < employees.certified && countOfPendingCert < employees.certified) {
       if (buildings[i] === COMMERICAL){
+        let obj = {
+          commercial : {
+            certified: 2,
+            pendingCert: 2,
+            laborer: 0,
+          }
+        }
         countOfCertified += 2;
         countOfPendingCert += 2;
         // if adding this building type exceeds the number of certified workers, do not add and remove the count then iterate.
@@ -47,9 +56,11 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
             if (countOfLaborer + 1 < employees.laborer) {
               countOfLaborer ++;
               numWorkerCheckLaborer ++;
+              obj.commercial = { certified: 2, pendingCert: (numWorkerCheckPendingCert + 2), laborer: numWorkerCheckLaborer}
             } else if ( countOfPendingCert + 1 < employees.pendingCert) {
               countOfPendingCert ++;
               numWorkerCheckPendingCert++;
+              obj.commercial = { certified: 2, pendingCert: (numWorkerCheckPendingCert + 2), laborer: numWorkerCheckLaborer}
             // return since not enough workers
             // TODO: else below - if reaches below, skip and check next index to see if completable
             } else {
@@ -60,7 +71,10 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
               return buildingsToDo;
             }
           }
-          buildingsToDo.push(buildings[i]);
+          buildingsToDo.push(obj);
+          // reset counters
+          numWorkerCheckLaborer = 0;
+          numWorkerCheckPendingCert = 0;
           // TODO: else below - if reaches below, skip and check next index to see if completable
         } else {
           countOfCertified -= 2;
@@ -68,25 +82,41 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
           return buildingsToDo;
         }
       } else if (buildings[i] === DOUBLE) {
+        let obj = {
+          double : {
+            certified: 1,
+            pendingCert: 0,
+            laborer: 0,
+          }
+        }
         countOfCertified ++; 
         // If no more certified, can straight up return, no more building projects can be completed
         if (countOfCertified > employees.certified) {
           return buildingsToDo;
         // assign laborers first
         } else if (countOfLaborer + 1 < employees.laborer) {
-          buildingsToDo.push(buildings[i]);
+          obj.double = {certified: 1, pendingCert: 0, laborer: 1}
+          buildingsToDo.push(obj);
         } else if (countOfPendingCert + 1 < employees.pendingCert) {
-          buildingsToDo.push(buildings[i]);
+          obj.double = { certified: 1, pendingCert: 1, laborer: 0}
+          buildingsToDo.push(obj);
         // if it reaches here, there are no laborers or pending cert available. Return.
         } else {
           return buildingsToDo;
         }
       } else {
+        let obj = {
+          double : {
+            certified: 1,
+            pendingCert: 0,
+            laborer: 0,
+          }
+        }
         countOfCertified ++; 
         if (countOfCertified > employees.certified) {
           return buildingsToDo;
         } else {
-          buildingsToDo.push(buildings[i]);
+          buildingsToDo.push(obj);
         }
       }
       i++;
@@ -143,7 +173,7 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
     }
   }
 
-  const buildingsRequired = numberOfBuildingsCheck(buildings, employees.monday);
+  const buildingsRequired = numberOfBuildingsCheck(buildings, employees.monday, MONDAY);
   // const result = schedule(buildingsRequired, employees.monday)
   console.log(buildingsRequired);
 
