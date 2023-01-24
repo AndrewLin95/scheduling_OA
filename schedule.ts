@@ -95,7 +95,7 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
   }
 
   const schedule = (buildingsRequired, employees) => {
-        // [
+    // [
     //   { index: 0, single: { certified: 1 } },
     //   { index: 1, double: { certified: 1 } },
     //   { index: 2, commercial: { certified: 1 } },
@@ -196,6 +196,14 @@ const tempResultOutputSchema = {
       double: {
         certified: 1,
         pendingCert: 1,
+      }
+    },
+    {
+      index: 3,
+      commercial: {
+        certified: 2,
+        pendingCert: 2,
+        laborer: 4
       }
     }
   ],
