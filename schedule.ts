@@ -4,9 +4,9 @@
 
 import { daysOfMonth, Employee } from "./models";
 
-const single = "single";
-const double = "double";
-const commercial = "commercial";
+const SINGLE = "single";
+const DOUBLE = "double";
+const COMMERICAL = "commercial";
 
 const certified = "certified";
 const pendingCert = "installer pending certification";
@@ -24,21 +24,71 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
 
     let i = 0;
     let countOfCertified = 0;
-    while (countOfCertified < employees.certified) {
-      if (buildings[i] === commercial){
+    let countOfPendingCert = 0;
+    let countOfLaborer = 0;
+
+    // counter for variable amounts of commercial workers
+    let numWorkerCheckLaborer = 0;
+    let numWorkerCheckPendingCert = 0;
+
+    while (countOfCertified < employees.certified && countOfPendingCert < employees.certified) {
+      if (buildings[i] === COMMERICAL){
         countOfCertified += 2;
+        countOfPendingCert += 2;
         // if adding this building type exceeds the number of certified workers, do not add and remove the count then iterate.
+        if (countOfCertified > employees.certified || countOfPendingCert > employees.pendingCert) {
+          // TODO: If the cut off is at commercial, check if a double is after it. Since the number of workers is less, even though commercial is cut off, can may still fulfill the double building.
+          countOfCertified -= 2;
+          countOfPendingCert -= 2;
+          return buildingsToDo;
+        // Check if we have enough of each workers to satisfy
+        } else if ((numWorkerCheckLaborer + numWorkerCheckPendingCert) < 4) {
+          while (numWorkerCheckLaborer + numWorkerCheckPendingCert < 4) {
+            if (countOfLaborer + 1 < employees.laborer) {
+              countOfLaborer ++;
+              numWorkerCheckLaborer ++;
+            } else if ( countOfPendingCert + 1 < employees.pendingCert) {
+              countOfPendingCert ++;
+              numWorkerCheckPendingCert++;
+            // return since not enough workers
+            // TODO: else below - if reaches below, skip and check next index to see if completable
+            } else {
+              countOfLaborer -= numWorkerCheckLaborer;
+              countOfPendingCert -= numWorkerCheckPendingCert;
+              numWorkerCheckLaborer = 0;
+              numWorkerCheckPendingCert = 0;
+              return buildingsToDo;
+            }
+          }
+          buildingsToDo.push(buildings[i]);
+          // TODO: else below - if reaches below, skip and check next index to see if completable
+        } else {
+          countOfCertified -= 2;
+          countOfPendingCert -= 2;
+          return buildingsToDo;
+        }
+      } else if (buildings[i] === DOUBLE) {
+        countOfCertified ++; 
+        // If no more certified, can straight up return, no more building projects can be completed
         if (countOfCertified > employees.certified) {
-          // to implement: If the cut off is at commercial, check if a double is after it. Since the number of workers is less, even though commercial is cut off, can may still fulfill the double building.
-          // countOfCertified -= 2;
+          return buildingsToDo;
+        // assign laborers first
+        } else if (countOfLaborer + 1 < employees.laborer) {
+          buildingsToDo.push(buildings[i]);
+        } else if (countOfPendingCert + 1 < employees.pendingCert) {
+          buildingsToDo.push(buildings[i]);
+        // if it reaches here, there are no laborers or pending cert available. Return.
+        } else {
+          return buildingsToDo;
+        }
+      } else {
+        countOfCertified ++; 
+        if (countOfCertified > employees.certified) {
           return buildingsToDo;
         } else {
           buildingsToDo.push(buildings[i]);
         }
-      } else {
-        countOfCertified ++; 
-        buildingsToDo.push(buildings[i]);
-      } 
+      }
       i++;
     };
     return buildingsToDo;
@@ -68,7 +118,7 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
     let j = 0;
     while (j < buildingsRequired.length) {
       // for commercial buildings
-      if (buildingsRequired[j] = commercial) {
+      if (buildingsRequired[j] = COMMERICAL) {
         let obj = {
           index: j,
           commercial: {
@@ -86,6 +136,7 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
           remainingWorkers++;
           obj.commercial = { certified: 2, pendingCert: 2, laborer: remainingWorkers }
         }
+        j++;
       }
       return obj;
       } 
@@ -93,15 +144,15 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
   }
 
   const buildingsRequired = numberOfBuildingsCheck(buildings, employees.monday);
-  const result = schedule(buildingsRequired, employees.monday)
-  console.log(result);
+  // const result = schedule(buildingsRequired, employees.monday)
+  console.log(buildingsRequired);
 
-  return result;
+  return buildingsRequired;
 }
 
 
 
-const buildings = [single, double, commercial, single, commercial, single, double, commercial, single, commercial]
+const buildings = [SINGLE, DOUBLE, COMMERICAL, SINGLE, COMMERICAL, SINGLE, DOUBLE, COMMERICAL, SINGLE, COMMERICAL]
 const employees = {
   monday: {
     certified: 6,
