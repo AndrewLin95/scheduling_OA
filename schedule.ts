@@ -14,14 +14,16 @@ const certified = "certified";
 const pendingCert = "installer pending certification";
 const laborer = "laborer";
 
-const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>) => {
+// Record<daysOfMonth, Employee>[]
+
+const schedule = (buildings: string[], employees: any) => {
   // Every single and double building requires 1 certified. Every commericial requires 2. If there are no certified, can cut off the schedule there.
   // Since buildings are provided in their importance, if there are not enough builders for a building in sequence, can cut off. 
   //    If the cut off is at commercial, check if a double is after it. Since the number of workers is less, even though commercial is cut off, can may still fulfill the double building.
   // Return an array with indicies correlating to the day of the week [Monday, Tuesday... etc.].
   //    Within the array, return an object with string for building type, and the number / type of employee required for the build.
 
-  const numberOfBuildingsCheck = (buildings: string[], employees: Employee, dayOfWeek: string) => {
+  const numberOfBuildingsCheck = (buildings: string[], employees: any, dayOfWeek: string) => {
     let buildingsToDo: any = {};
     buildingsToDo[dayOfWeek] = [];
 
@@ -33,7 +35,6 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
     // counter for variable amounts of commercial workers
     let numWorkerCheckLaborer = 0;
     let numWorkerCheckPendingCert = 0;
-
     while (countOfCertified < employees.certified && countOfPendingCert < employees.certified) {
       if (buildings[i] === COMMERICAL){
         let obj = {
@@ -125,43 +126,62 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
     return buildingsToDo;
   }
 
-  const buildingsRequired = numberOfBuildingsCheck(buildings, employees.monday, MONDAY);
-  // const result = schedule(buildingsRequired, employees.monday)
-  console.log(buildingsRequired);
+  let schedule = {};
 
-  return buildingsRequired;
+  let i = 0;
+  const dayOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+  while (i < 5) {
+    const buildingsRequired = numberOfBuildingsCheck(buildings, employees[i][dayOfWeek[i]], dayOfWeek[i]);
+    console.log(buildingsRequired);
+    i++;
+  }
+
+  // const result = schedule(buildingsRequired, employees.monday)
+  console.log(schedule);
+
+  return schedule;
 }
 
 
 
 const buildings = [SINGLE, DOUBLE, COMMERICAL, SINGLE, COMMERICAL, SINGLE, DOUBLE, COMMERICAL, SINGLE, COMMERICAL]
-const employees = {
-  monday: {
-    certified: 6,
-    pendingCert: 5,
-    laborer: 8,
+const employees = [
+  {
+    monday: {
+      certified: 6,
+      pendingCert: 5,
+      laborer: 8,
+    },
   },
-  tuesday: {
-    certified: 6,
-    pendingCert: 5,
-    laborer: 8,
+  {
+    tuesday: {
+      certified: 6,
+      pendingCert: 5,
+      laborer: 8,
+    },
   },
-  wednesday: {
-    certified: 6,
-    pendingCert: 5,
-    laborer: 8,
+  {
+    wednesday: {
+      certified: 6,
+      pendingCert: 5,
+      laborer: 8,
+    },
   },
-  thursday: {
-    certified: 6,
-    pendingCert: 5,
-    laborer: 8,
+  {
+    thursday: {
+      certified: 6,
+      pendingCert: 5,
+      laborer: 8,
+    },
   },
-  friday: {
-    certified: 6,
-    pendingCert: 5,
-    laborer: 8,
-  }
-}
+  {
+    friday: {
+      certified: 6,
+      pendingCert: 5,
+      laborer: 8,
+    },
+  },
+]
 
 const result = schedule(buildings, employees);
 
