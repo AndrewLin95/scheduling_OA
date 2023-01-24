@@ -5,3 +5,7 @@ export interface Employee {
   pendingCert: number,
   laborer: number,
 }
+
+export interface allEmployees {
+  employees: Record<daysOfMonth, Employee>
+}
