@@ -22,7 +22,8 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
   //    Within the array, return an object with string for building type, and the number / type of employee required for the build.
 
   const numberOfBuildingsCheck = (buildings: string[], employees: Employee, dayOfWeek: string) => {
-    let buildingsToDo: any = [];
+    let buildingsToDo: any = {};
+    buildingsToDo[dayOfWeek] = [];
 
     let i = 0;
     let countOfCertified = 0;
@@ -71,7 +72,7 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
               return buildingsToDo;
             }
           }
-          buildingsToDo.push(obj);
+          buildingsToDo[dayOfWeek].push(obj);
           // reset counters
           numWorkerCheckLaborer = 0;
           numWorkerCheckPendingCert = 0;
@@ -96,10 +97,10 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
         // assign laborers first
         } else if (countOfLaborer + 1 < employees.laborer) {
           obj.double = {certified: 1, pendingCert: 0, laborer: 1}
-          buildingsToDo.push(obj);
+          buildingsToDo[dayOfWeek].push(obj);
         } else if (countOfPendingCert + 1 < employees.pendingCert) {
           obj.double = { certified: 1, pendingCert: 1, laborer: 0}
-          buildingsToDo.push(obj);
+          buildingsToDo[dayOfWeek].push(obj);
         // if it reaches here, there are no laborers or pending cert available. Return.
         } else {
           return buildingsToDo;
@@ -116,61 +117,12 @@ const schedule = (buildings: string[], employees: Record<daysOfMonth, Employee>)
         if (countOfCertified > employees.certified) {
           return buildingsToDo;
         } else {
-          buildingsToDo.push(obj);
+          buildingsToDo[dayOfWeek].push(obj);
         }
       }
       i++;
     };
     return buildingsToDo;
-  }
-
-  const schedule = (buildingsRequired, employees) => {
-    // [
-    //   { index: 0, single: { certified: 1 } },
-    //   { index: 1, double: { certified: 1 } },
-    //   { index: 2, commercial: { certified: 1 } },
-    //   { index: 3, single: { certified: 1 } }
-    // ]
-
-    // const obj = {
-    //   index : i,
-    // }
-    // const builder = {
-    //   certified: 1,
-    // }
-    // obj[buildings[i]] = builder
-
-    // check remaining laborers.
-    // ideally, assign pendingCerts to commercial, then assign laborers to rest...
-    let countOfPendingCert = 0;
-    let countOfLaborer = 0;
-
-    let j = 0;
-    while (j < buildingsRequired.length) {
-      // for commercial buildings
-      if (buildingsRequired[j] = COMMERICAL) {
-        let obj = {
-          index: j,
-          commercial: {
-            certified: 2,
-            pendingCert: 2,
-            laborer: 0,
-          }
-        };
-      // check pending certs, skip if not enough. TODO: a way to index what was skipped and return to buildings. >insert beginning of array
-      if (countOfPendingCert + 2 > employees.pendingCert){
-        j ++;
-      } else if (countOfLaborer + 1 < employees.laborer) {
-        let remainingWorkers = 0;
-        while (remainingWorkers < 4) {
-          remainingWorkers++;
-          obj.commercial = { certified: 2, pendingCert: 2, laborer: remainingWorkers }
-        }
-        j++;
-      }
-      return obj;
-      } 
-    }
   }
 
   const buildingsRequired = numberOfBuildingsCheck(buildings, employees.monday, MONDAY);
