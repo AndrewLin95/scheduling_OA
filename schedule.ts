@@ -2,6 +2,8 @@
 //   2:00
 // npx ts-node schedule.ts
 
+// GREEDY ALGORITHM FOR SCHEDULING
+
 import { daysOfMonth, Employee, allEmployees } from "./models";
 
 const SINGLE = "single";
@@ -35,7 +37,9 @@ const schedule = (buildings: string[], employees: any ) => {
     // counter for variable amounts of commercial workers
     let numWorkerCheckLaborer = 0;
     let numWorkerCheckPendingCert = 0;
-    while (countOfCertified < employees.certified && countOfPendingCert < employees.certified) {
+    // TODO: break for if there are no buildings left
+    // TODO: stack for buildings
+    while (countOfCertified < employees.certified) {
       if (buildings[i] === COMMERICAL){
         let obj = {
           commercial : {
@@ -108,7 +112,7 @@ const schedule = (buildings: string[], employees: any ) => {
         }
       } else {
         let obj = {
-          double : {
+          single : {
             certified: 1,
             pendingCert: 0,
             laborer: 0,
@@ -136,8 +140,9 @@ const schedule = (buildings: string[], employees: any ) => {
 
   let i = 0;
   const dayOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+  let _buildings = buildings;
   while (i < 5) {
-    const buildingsRequired = numberOfBuildingsCheck(buildings, employees[i][dayOfWeek[i]], dayOfWeek[i]);
+    const buildingsRequired = numberOfBuildingsCheck(_buildings, employees[i][dayOfWeek[i]], dayOfWeek[i]);
     schedule[dayOfWeek[i]] = buildingsRequired;
     i++;
   }
