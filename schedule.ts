@@ -39,6 +39,7 @@ const schedule = (buildings: string[], employees: any ) => {
     let numWorkerCheckPendingCert = 0;
     // TODO: break for if there are no buildings left
     // TODO: stack for buildings
+    // TODO: break for exceed of total employees - check if even required
     while (countOfCertified < employees.certified) {
       if (buildings[i] === COMMERICAL){
         let obj = {
