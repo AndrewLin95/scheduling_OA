@@ -4,6 +4,7 @@
 
 // GREEDY ALGORITHM FOR SCHEDULING
 
+
 import { daysOfMonth, Employee, allEmployees } from "./models";
 
 const SINGLE = "single";
